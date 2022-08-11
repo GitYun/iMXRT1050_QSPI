@@ -48,10 +48,6 @@
 /*******************************************************************************
 * Definitions
 ******************************************************************************/
-#ifndef QSPI_FLASH_TYPE
-#define QSPI_FLASH_TYPE W25Q256xx
-#endif
-
 #define IS25WP064A  0
 #define W25Q08xx    1
 #define W25Q16xx    2
@@ -61,6 +57,22 @@
 #define W25Q256xx   32
 #define W25Q512xx   64
 #define W25Q_FLASH_MASK 0xFF
+
+#ifndef QSPI_FLASH_TYPE
+#define QSPI_FLASH_TYPE W25Q256xx
+#endif
+
+#ifndef QSPI_FLASH_SUPPORT_QPI
+#define QSPI_FLASH_SUPPORT_QPI 0
+#endif
+
+#ifndef QSPI_QUAD_ENABLE_OFFSET
+#if QSPI_FLASH_TYPE == IS25WP064A
+    #define QSPI_QUAD_ENABLE_OFFSET 6
+#else
+    #define QSPI_QUAD_ENABLE_OFFSET 1
+#endif
+#endif // QSPI_QUAD_ENABLE_OFFSET
 
 #define EXAMPLE_FLEXSPI FLEXSPI
 

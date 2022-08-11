@@ -94,9 +94,9 @@ const uint32_t customLUT[CUSTOM_LUT_LENGTH] = {
 
         /* Fast read quad mode - SDR */
         [4 * NOR_CMD_LUT_SEQ_IDX_READ_FAST_QUAD] =
-            FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR, kFLEXSPI_1PAD, 0x6B, kFLEXSPI_Command_RADDR_SDR, kFLEXSPI_1PAD, 0x18),
+            FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR, kFLEXSPI_1PAD, 0xEB, kFLEXSPI_Command_RADDR_SDR, kFLEXSPI_4PAD, 0x18),
         [4 * NOR_CMD_LUT_SEQ_IDX_READ_FAST_QUAD + 1] = FLEXSPI_LUT_SEQ(
-            kFLEXSPI_Command_DUMMY_SDR, kFLEXSPI_4PAD, 0x08, kFLEXSPI_Command_READ_SDR, kFLEXSPI_4PAD, 0x04),
+            kFLEXSPI_Command_DUMMY_SDR, kFLEXSPI_4PAD, 0x06, kFLEXSPI_Command_READ_SDR, kFLEXSPI_4PAD, 0x04),
 
         /* Read extend parameters */
         [4 * NOR_CMD_LUT_SEQ_IDX_READSTATUS] =
@@ -140,6 +140,8 @@ const uint32_t customLUT[CUSTOM_LUT_LENGTH] = {
             FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR, kFLEXSPI_1PAD, 0x31, kFLEXSPI_Command_WRITE_SDR, kFLEXSPI_1PAD, 0x04),
 #endif
 
+#if defined (QSPI_FLASH_SUPPORT_QPI) && (QSPI_FLASH_SUPPORT_QPI != 0)
+
         /* Enter QPI mode */
         [4 * NOR_CMD_LUT_SEQ_IDX_ENTERQPI] =
 #if QSPI_FLASH_TYPE == IS25WP064A
@@ -155,6 +157,8 @@ const uint32_t customLUT[CUSTOM_LUT_LENGTH] = {
 #else // (QSPI_FLASH_TYPE & W25Q_FLASH_MASK) != 0
             FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR, kFLEXSPI_4PAD, 0xFF, kFLEXSPI_Command_STOP, kFLEXSPI_1PAD, 0),
 #endif
+
+#endif // defined (QSPI_FLASH_SUPPORT_QPI) && (QSPI_FLASH_SUPPORT_QPI != 0)
 
         /* Read status register */
         [4 * NOR_CMD_LUT_SEQ_IDX_READSTATUSREG] =
@@ -252,7 +256,7 @@ status_t flexspi_nor_enable_quad_mode(FLEXSPI_Type *base)
 {
     flexspi_transfer_t flashXfer;
     status_t status;
-    uint32_t writeValue = 0x40;
+    uint32_t writeValue = 1u << QSPI_QUAD_ENABLE_OFFSET;
 
     /* Write neable */
     status = flexspi_nor_write_enable(base, 0);
